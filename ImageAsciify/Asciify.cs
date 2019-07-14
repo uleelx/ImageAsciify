@@ -14,8 +14,8 @@ namespace ImageAsciify
 		{
 			char[] chars = new char[] { 'W', 'M', 'Q', 'R', 'O', 'S', 'C', 'V', '?', ')', '>', '!', ':', ',', '.' };
 			StringBuilder sb = new StringBuilder();
-			string html_head = "<!DOCTYPE html><html><body style = \"font-family: Monospace;font-size: 2px;line-height: 50%;\">";
-			string html_tail = "</body></html>";
+			string html_head = "<!DOCTYPE html><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"></head><body style = \"font-size: 2px; line-height: 50%;\"><pre>\n";
+			string html_tail = "</pre></body></html>";
 			sb.Append(html_head);
 
 			var outStream = new MemoryStream();
@@ -53,14 +53,14 @@ namespace ImageAsciify
 						}
 						sb.Append(chars[l * 14 / 255]);
 					}
-					sb.Append("<br/>");
+					sb.Append("\n");
 				}
 			}
 			sb.Append(html_tail);
 
 			outStream.Dispose();
 
-			return sb.ToString().Replace("...", ".. ");
+			return sb.ToString();
 		}
 	}
 }
