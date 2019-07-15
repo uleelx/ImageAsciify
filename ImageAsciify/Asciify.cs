@@ -10,9 +10,36 @@ namespace ImageAsciify
 {
 	public class Asciify
 	{
-		public static string ImageToHTML(string filePath, bool histogramEqualization, int maxLength)
+		private static int[][] kernels = {
+			new int[]
+			{
+				0, -1,  0,
+			   -1,  5, -1,
+				0, -1,  0
+			},
+			new int[]
+			{
+				-1,  0, -1,
+				 0,  5,  0,
+				-1,  0, -1
+			},
+			new int[]
+			{
+				-1, -1, -1,
+				-1,  9, -1,
+				-1, -1, -1
+			},
+			new int[]
+			{
+				-1, -2, -1,
+				-2, 13, -2,
+				-1, -2, -1
+			},
+		};
+		public static string ImageToHTML(string filePath, bool histogramEqualization, int maxLength, int sharpenKernel)
 		{
-			char[] chars = new char[] { 'W', 'M', 'Q', 'R', 'O', 'S', 'C', 'V', '?', ')', '>', '!', ':', ',', '.' };
+			char[] chars = new char[] { '@', 'W', 'M', 'Q', 'R', 'O', 'S', 'C', 'V', ')', '>', '!', ':', ',', '.' };
+			int[] kernal = kernels[sharpenKernel];
 			StringBuilder sb = new StringBuilder();
 			string html_head = "<!DOCTYPE html><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"></head><body style = \"font-size: 2px; line-height: 50%;\"><pre>\n";
 			string html_tail = "</pre></body></html>";
@@ -47,11 +74,19 @@ namespace ImageAsciify
 						int l = image[x, y].R;
 						if (y > 0 && y < h - 1 && x > 0 && x < w - 1)
 						{
-							l = l * 5 - image[x, y - 1].R - image[x, y + 1].R - image[x - 1, y].R - image[x + 1, y].R;
+							l = kernal[0] * image[x - 1, y - 1].R
+							  + kernal[1] * image[x, y - 1].R
+							  + kernal[2] * image[x + 1, y - 1].R
+							  + kernal[3] * image[x - 1, y].R
+							  + kernal[4] * image[x, y].R
+							  + kernal[5] * image[x + 1, y].R
+							  + kernal[6] * image[x - 1, y + 1].R
+							  + kernal[7] * image[x, y + 1].R
+							  + kernal[8] * image[x + 1, y + 1].R;
 							if (l < 0) l = 0;
 							if (l > 255) l = 255;
 						}
-						sb.Append(chars[l * 14 / 255]);
+						sb.Append(chars[(int)Math.Round(l * 14 / 255.0)]);
 					}
 					sb.Append("\n");
 				}

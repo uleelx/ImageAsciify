@@ -16,6 +16,9 @@ namespace ImageAsciify
 
 			[Option('l', Default = 512, HelpText = "最大像素", Required = false)]
 			public int MaxLength { get; set; }
+
+			[Option('s', Default = 0, HelpText = "锐化卷积核", Required = false)]
+			public int SharpenKernel { get; set; }
 		}
 
 		static void Main(string[] args)
@@ -23,7 +26,7 @@ namespace ImageAsciify
 			Parser.Default.ParseArguments<Options>(args)
 				.WithParsed(o =>
 				{
-					var html = Asciify.ImageToHTML(o.FilePath, o.HistogramEqualization, o.MaxLength);
+					var html = Asciify.ImageToHTML(o.FilePath, o.HistogramEqualization, o.MaxLength, o.SharpenKernel);
 					string tempFile = Path.GetTempFileName() + ".html";
 					File.WriteAllText(tempFile, html);
 					System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
