@@ -1,9 +1,7 @@
-﻿using PhotoSauce.MagicScaler;
-using SixLabors.ImageSharp;
+﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System;
-using System.IO;
 using System.Text;
 
 namespace ImageAsciify
@@ -38,21 +36,17 @@ namespace ImageAsciify
 		};
 		public static string ImageToHTML(string filePath, bool histogramEqualization, int maxLength, int sharpenKernel)
 		{
-			char[] chars = new char[] { '@', 'W', 'M', 'Q', 'R', 'O', 'S', 'C', 'V', ')', '>', '!', ':', ',', '.' };
+			char[] chars = new char[] { '@', 'W', 'M', 'Q', 'R', 'O', 'S', 'C', 'V', ')', '>', '!', ':', ',', '.', ' ' };
 			int[] kernal = kernels[sharpenKernel];
 			StringBuilder sb = new StringBuilder();
 			string html_head = "<!DOCTYPE html><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"></head><body><pre style=\"font-size: 2px; line-height: 50%;\">\n";
 			string html_tail = "</pre></body></html>";
 			sb.Append(html_head);
 
-			var outStream = new MemoryStream();
-
-			MagicImageProcessor.ProcessImage(filePath, outStream, new ProcessImageSettings());
-
-			outStream.Seek(0, SeekOrigin.Begin);
-
-			using (Image<Rgba32> image = (Image<Rgba32>)Image.Load(outStream))
+			using (Image<Rgba32> image = (Image<Rgba32>)Image.Load(filePath))
 			{
+				image.Mutate(x => x.AutoOrient());
+
 				int m = Math.Max(image.Height, image.Width);
 				double delta = Math.Max(m * 1.0 / maxLength, 1);
 				int w = (int)(image.Width / delta);
@@ -64,7 +58,7 @@ namespace ImageAsciify
 				}
 
 				image.Mutate(x => x
-					 .Resize(w, h)
+					 .Resize(w, h, KnownResamplers.Welch)
 					 .Grayscale());
 
 				for (int y = 0; y < h; y++)
@@ -86,14 +80,12 @@ namespace ImageAsciify
 							if (l < 0) l = 0;
 							if (l > 255) l = 255;
 						}
-						sb.Append(chars[(int)Math.Round(l * 14 / 255.0)]);
+						sb.Append(chars[(int)Math.Round(l * 15 / 255.0)]);
 					}
 					sb.Append("\n");
 				}
 			}
 			sb.Append(html_tail);
-
-			outStream.Dispose();
 
 			return sb.ToString();
 		}
