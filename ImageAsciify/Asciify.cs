@@ -58,7 +58,7 @@ namespace ImageAsciify
 				}
 
 				image.Mutate(x => x
-					 .Resize(w, h, KnownResamplers.Welch)
+					 .Resize(w, h, KnownResamplers.Bicubic)
 					 .Grayscale());
 
 				for (int y = 0; y < h; y++)
