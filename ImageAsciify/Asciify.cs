@@ -36,7 +36,7 @@ namespace ImageAsciify
 		};
 		public static string ImageToHTML(string filePath, bool histogramEqualization, int maxLength, int sharpenKernel)
 		{
-			char[] chars = new char[] { '@', 'W', 'M', 'Q', 'R', 'O', 'S', 'C', 'V', ')', '>', '!', ':', ',', '.', ' ' };
+			char[] chars = new char[] { '@', '%', 'M', 'Q', 'R', 'O', 'S', 'Z', 'Y', ')', '>', '!', ':', ',', '.', ' ' };
 			int[] kernal = kernels[sharpenKernel];
 			StringBuilder sb = new StringBuilder();
 			string html_head = "<!DOCTYPE html><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"></head><body><pre style=\"font-size: 2px; line-height: 50%;\">\n";
