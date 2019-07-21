@@ -34,7 +34,7 @@ namespace ImageAsciify
 				-1, -2, -1
 			},
 		};
-		public static string ImageToHTML(string filePath, bool histogramEqualization, int maxLength, int sharpenKernel)
+		public static string ImageToHTML(string filePath, bool histogramEqualization, int maxLength, int sharpenKernel, int BitDepth)
 		{
 			char[] chars = new char[] { '@', '%', 'M', 'Q', 'R', 'O', 'S', 'Z', 'Y', ')', '>', '!', ':', ',', '.', ' ' };
 			int[] kernal = kernels[sharpenKernel];
@@ -61,6 +61,8 @@ namespace ImageAsciify
 					 .Resize(w, h, KnownResamplers.Bicubic)
 					 .Grayscale());
 
+				int maxCharIndex = (1 << BitDepth) - 1;
+
 				for (int y = 0; y < h; y++)
 				{
 					for (int x = 0; x < w; x++)
@@ -80,7 +82,8 @@ namespace ImageAsciify
 							if (l < 0) l = 0;
 							if (l > 255) l = 255;
 						}
-						sb.Append(chars[(int)Math.Round(l * 15 / 255.0)]);
+
+						sb.Append(chars[(int)Math.Round(l * maxCharIndex / 255.0) * 15 / maxCharIndex]);
 					}
 					sb.Append("\n");
 				}
